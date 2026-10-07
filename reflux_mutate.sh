@@ -71,7 +71,7 @@ run "structure-editor CSS unscoped" "#panel-chem .chem-bar {" ".chem-bar {" refl
 run "structure-editor var collides with shell" "--chem-chip: var(--bg-input);" "--bg: var(--bg-input);" reflux_checks.cjs
 run "employer string back on the structure-editor tab" "switchTab('chem')\">Structure Editor</button>" "switchTab('chem')\">KSC Structure Editor</button>" reflux_checks.cjs
 run "structure-editor IIFE signature broken" "<script id=\"chem-app\">\n(function(){" "<script id=\"chem-app\">\n(async function(){" reflux_checks.cjs
-run "header version drifts from the rendered version" "APP_VER=\"v2\"" "APP_VER=\"v1\"" reflux_checks.cjs
+run "header version drifts from the rendered version" "APP_VER=\"v3\"" "APP_VER=\"v2\"" reflux_checks.cjs
 run "branded global reinstated" "window.refluxChem = {" "window.kscChemSketch = {" reflux_checks.cjs
 run "vendored engine payload altered" "<style id=\"chem-theme-css\">" "<style id=\"chem-theme-css\">/*x*/" reflux_checks.cjs
 run "dead colour-swatch rule reintroduced" "span.K-StyleSheet-Detector{" ".K-Res-Icon-Color-NotSet{color:red}span.K-StyleSheet-Detector{" reflux_checks.cjs
@@ -104,6 +104,10 @@ run "field cap lifted so inputs balloon again" "max-width:240px" "max-width:none
 run "free-text fields lose their opt-out from the cap" ".field:has(.eq-input),.field:has(.title-input){max-width:none;}" "" reflux_checks.cjs
 run "active tab no longer scrolled into view" "if(ab.scrollIntoView)try{ab.scrollIntoView({block:\"nearest\",inline:\"center\"});}catch(e){}" "" reflux_checks.cjs
 runsplash "splash loses its touch-pointer block" "@media(pointer:coarse)" "@media(pointer:fine)"
+echo "--- Lab Book design system ---"
+run "body typeface reverts to IBM Plex" "--font-body:\"Source Sans 3\"," "--font-body:\"IBM Plex Sans\"," reflux_checks.cjs
+run "mono ligatures switched back on" "min-height:100vh;font-variant-ligatures:none;" "min-height:100vh;" reflux_checks.cjs
+runsplash "splash palette drifts from the toolbox" "--accent:#1F6F8B;" "--accent:#3a6aee;"
 runsplash "splash loses its tablet breakpoint" "@media(max-width:900px){.content{padding:24px 16px 32px;}}" ""
 # The point of reflux_view.cjs: reflux_checks.cjs asserts that a rule was written, so a
 # defect that leaves every rule intact and breaks only the rendered result is

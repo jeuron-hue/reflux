@@ -40,7 +40,11 @@ for(const t of ['kaneka','KSC','Technical Development','gary.chan@','TD Calc','t
 chk(!/IPCal/.test(s),'no residue: IPCal (lowercase tab key "ipcal" is an internal id and allowed)');
 chk(!/[\u200b-\u200f\u202a-\u202e\ufeff]/.test(s),'no invisible/bidi control characters');
 chk((app.match(/jeuron@gmail\.com/g)||[]).length===2,'contact address on both bug links');
-chk(!/JetBrains|'Inter'/.test(app),'dropped typefaces not referenced');
+// Lab Book typefaces: Source Sans 3 for words, JetBrains Mono for numbers,
+// ligatures off. IBM Plex (the pre-v3 pair) and Inter are gone for good.
+chk(/--font-body:"Source Sans 3",/.test(s)&&/--font-mono:"JetBrains Mono",/.test(s),'Lab Book typefaces set as the font tokens');
+chk(!/IBM Plex|'Inter'/.test(app),'dropped typefaces not referenced');
+chk(/\bbody\{[^}]*font-variant-ligatures:none/.test(app),'ligatures off across the page');
 chk(!/service_role|eyJ[A-Za-z0-9_-]{20,}/.test(s),'no key-shaped strings');
 
 // 2. document structure
@@ -116,6 +120,10 @@ if(fs.existsSync(SPLASH)){
   chk(!/kaneka|KSC|ChemSketch/i.test(idxRaw),'no employer or prior product string on the splash page');
   chk(!/[\u200b-\u200f\u202a-\u202e\ufeff]/.test(idxRaw),'no invisible/bidi characters on the splash page');
   chk((idx.match(/reflux-theme/g)||[]).length===2,'splash shares the single theme key, read and write');
+  // Both pages declare the same two theme blocks, so a palette edit in one and
+  // not the other shows up here rather than as a colour jump between pages.
+  const palette=t=>(t.match(/:root, \[data-theme="dark"\] \{[\s\S]*?\[data-theme="light"\] \{[\s\S]*?\}/)||[''])[0];
+  chk(palette(idx)!==''&&palette(idx)===palette(app),'splash palette and typefaces identical to the toolbox');
   chk(/href="reflux\.html"/.test(idx),'splash offers a plain link to the toolbox');
   chk(!/on(?:click|change|input)="/.test(idx),'splash binds no inline handlers');
   chk(/@media\(pointer:coarse\)/.test(idx),'splash carries the same touch-pointer block');
