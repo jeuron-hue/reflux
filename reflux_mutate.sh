@@ -108,6 +108,9 @@ echo "--- Lab Book design system ---"
 run "body typeface reverts to IBM Plex" "--font-body:\"Source Sans 3\"," "--font-body:\"IBM Plex Sans\"," reflux_checks.cjs
 run "mono ligatures switched back on" "min-height:100vh;font-variant-ligatures:none;" "min-height:100vh;" reflux_checks.cjs
 runsplash "splash palette drifts from the toolbox" "--accent:#1F6F8B;" "--accent:#3a6aee;"
+echo "--- structure editor chips ---"
+run "element chips lose their panel classes" "b.className = 'chem-chip chem-el';" "b.className = 'chip el';" reflux_checks.cjs
+run "template chips lose their panel class" "b.className = 'chem-chip';" "b.className = 'chip';" reflux_behave.cjs
 runsplash "splash loses its tablet breakpoint" "@media(max-width:900px){.content{padding:24px 16px 32px;}}" ""
 # The point of reflux_view.cjs: reflux_checks.cjs asserts that a rule was written, so a
 # defect that leaves every rule intact and breaks only the rendered result is

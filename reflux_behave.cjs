@@ -200,6 +200,10 @@ const tick=()=>new Promise(r=>setTimeout(r,0));
   chk(window.refluxChem.isReady()===false,'editor not constructed before the tab is opened');
   chk(d.querySelectorAll('#chem-elpick button').length===9,'9 element chips built without the engine');
   chk(d.querySelectorAll('#chem-templates button').length===10,'10 template buttons built without the engine');
+  // Script-built chips must carry the panel's prefixed classes, or they match
+  // no rule and render as bare browser buttons (the v2 rename missed them).
+  chk([...d.querySelectorAll('#chem-elpick button')].every(b=>b.classList.contains('chem-chip')&&b.classList.contains('chem-el')),'element chips carry chem-chip and chem-el');
+  chk([...d.querySelectorAll('#chem-templates button')].every(b=>b.classList.contains('chem-chip')),'template chips carry chem-chip');
   chk(d.getElementById('chem-composer-host').children.length===0,'composer host still empty before activation');
   chk(d.querySelectorAll('#panel-chem [onclick]').length===0,'structure editor binds no inline handlers');
 

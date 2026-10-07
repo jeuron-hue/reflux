@@ -197,13 +197,21 @@ async function measureChem(cdp, target, goto) {
 
     // Deep-linking to a late tab has to bring it into the scrolling bar, or the
     // page opens with no visible active state at all.
+    // The bar scrolls smoothly, so the tab glides in over a few frames. Poll for
+    // up to a second rather than reading the first frame, which raced the
+    // animation and failed about one run in three.
     await goto(url(path.basename(FILE)) + '#ipcal');
-    const deep = await evaluate(cdp, sessionId, `(() => {
-      const a=document.querySelector('.tab-btn.active'); if(!a) return null;
-      const r=a.getBoundingClientRect();
-      return {text:a.textContent.trim(), left:Math.round(r.left), right:Math.round(r.right),
-              visible: r.left >= -1 && r.right <= document.documentElement.clientWidth + 1};
-    })()`);
+    let deep = null;
+    for (let i = 0; i < 20; i++) {
+      deep = await evaluate(cdp, sessionId, `(() => {
+        const a=document.querySelector('.tab-btn.active'); if(!a) return null;
+        const r=a.getBoundingClientRect();
+        return {text:a.textContent.trim(), left:Math.round(r.left), right:Math.round(r.right),
+                visible: r.left >= -1 && r.right <= document.documentElement.clientWidth + 1};
+      })()`);
+      if (deep && deep.visible) break;
+      await new Promise(r => setTimeout(r, 50));
+    }
     chk(deep && deep.text === 'Impurity Profile', 'deep link activates the right tab');
     chk(deep && deep.visible, 'active tab is scrolled into view on a deep link (left ' +
       (deep ? deep.left : '?') + 'px)');

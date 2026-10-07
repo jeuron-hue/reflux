@@ -194,6 +194,11 @@ const chemCss=(app.match(/<style id="chem-css">([\s\S]*?)<\/style>/)||[])[1]||''
 const chemCode=chemCss.replace(/\/\*[\s\S]*?\*\//g,'');   // rules only; comments explain the scoping
 const chemSels=selectorsOf(chemCss);
 chk(chemSels.length>0&&chemSels.every(x=>x.startsWith('#panel-chem')),'every structure-editor selector scoped to #panel-chem');
+// Every class the panel's script assigns as a literal must have a rule in the
+// panel sheet. A class with no rule renders unstyled and no other check sees it.
+const chemAssigned=[...new Set([...(chemApp||'').matchAll(/className\s*=\s*'([^']+)'/g)].flatMap(m=>m[1].split(/\s+/)))];
+const chemOrphans=chemAssigned.filter(c=>!new RegExp('\\.'+c+'(?![\\w-])').test(chemCode));
+chk(chemAssigned.length>0&&chemOrphans.length===0,'every class the structure-editor script assigns has a panel rule (orphans: '+chemOrphans.join(',')+')');
 chk(!/:root/.test(chemCode),'structure-editor declares no :root variables');
 const chemVars=[...new Set([...chemCode.matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)].map(m=>m[1]))];
 chk(chemVars.length>0&&chemVars.every(v=>v.startsWith('--chem-')),
